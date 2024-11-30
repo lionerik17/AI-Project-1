@@ -1,0 +1,182 @@
+\section{Uninformed search}
+\subsection{Question 1 - Depth First Search}
+\par În această întrebare, scopul este găsirea unui punct fix de mâncare folosind algoritmul \textbf{Depth First Search (DFS)}. DFS explorează nodurile unui graf mergând pe cea mai adâncă cale înainte de a reveni la nodurile anterioare.
+
+\par Codul principal este implementat în funcția \texttt{depthFirstSearch} din \texttt{search.py} și este descris mai jos:
+
+\inputminted[linenos]{python}{code/depth_first_search.py}
+\par Acest algoritm utilizează un \textit{stack} (stivă) pentru a explora nodurile și revine la cele anterioare dacă calea curentă nu este validă. Performanța sa depinde de adâncimea soluției și numărul total de noduri, având o complexitate de \( \mathcal{O}(V + E) \), unde \( V \) este numărul de noduri, iar \( E \) este numărul de muchii.
+
+
+\subsection{Question 2 - Breadth First Search}
+\par În această întrebare, algoritmul \textbf{Breadth First Search (BFS)} este utilizat pentru a determina calea cea mai scurtă dintre punctul de start (\texttt{problem.getStartState()}) și punctul de oprire definit de condiția \texttt{problem.isGoalState(state)}.
+
+\par Implementarea din \texttt{search.py} este:
+\inputminted[linenos]{python}{code/breadth_first_search.py}
+\par  BFS explorează mai întâi nodurile la nivelul cel mai apropiat, utilizând un \textit{queue} (coadă) și având o complexitate de \( \mathcal{O}(V + E) \), unde \( V \) este numărul de noduri, iar \( E \) este numărul de muchii.
+
+\subsection{Question 3 - Varying the Cost Function}
+\par În această întrebare este prezentată funcției de cost, algoritmul fiind conceput să selecteze nodurile pe baza celui mai mic cost acumulat. 
+
+\par Implementarea metodei este prezentată mai jos:
+\inputminted[linenos]{python}{code/uniform_cost_search.py}
+\par Algoritmul utilizat, \textbf{Uniform Cost Search (UCS)}, prioritizează explorarea nodurilor cu cel mai mic cost, garantând găsirea unei soluții optime în condițiile unor costuri variabile. Complexitatea algoritmului este de  \mathcal{O}(V \log V + E \log V), unde \( V \) este numărul de noduri, iar \( E \) este numărul de muchii.
+
+
+
+\section{Informed search}
+% q4 - q8 din project 1
+\subsection{Question 4 - A* Search}
+\par Algoritmul \textbf{A*} combină costul real \( g(n) \), care reprezintă costul de la starea inițială până la nodul curent \( n \), cu o estimare euristică \( h(n) \), ce indică costul minim estimat de la nodul curent la nodul final. Funcția de evaluare folosită este:
+\[
+f(n) = g(n) + h(n)
+\]
+unde:
+\begin{itemize}
+	\item \( g(n) \) este costul real acumulat până la nodul \( n \),
+	\item \( h(n) \) este o estimare a costului rămas, bazată pe euristică.
+\end{itemize}
+
+\par Implementarea în cod este următoarea:
+\inputminted[linenos]{python}{code/a_star_search.py}
+
+\par Algoritmul calculează valoarea \( f(n) \) pentru fiecare nod \( n \), utilizând o coadă de priorități pentru a explora mai întâi nodurile cu cel mai mic \( f(n) \). 
+
+\par Performanța algoritmului depinde de euristica \( h \). Dacă \( h \) este \textit{admisibilă} (nu supraestimează costul real) și \textit{consistentă} (respectă inegalitatea triunghiului), A* garantează găsirea unei soluții optime. 
+
+\par În întrebările ce urmează, euristica utilizată este \textbf{distanța Manhattan}, definită astfel:
+\[
+h(n) = |x_1 - x_2| + |y_1 - y_2|
+\]
+unde \((x_1, y_1)\) și \((x_2, y_2)\) sunt coordonatele nodului curent, respectiv ale nodului țintă.
+
+\subsection{Question 5 - Finding All the Corners}
+\par Problema implică explorarea tuturor colțurilor dintr-un labirint. Aceasta este definită prin clasa \texttt{CornersProblem}, care include metode esențiale pentru configurarea stării inițiale, verificarea scopului și generarea succesorilor.
+
+\par Metodele principale utilizate sunt următoarele:
+
+\begin{itemize}
+	\item \texttt{getStartState}: Această metodă definește starea inițială a problemei, incluzând poziția de start și un tuplu de patru valori booleene pentru a urmări colțurile vizitate.
+	\par Starea inițială este reprezentată ca o tuplă \((\texttt{startingPosition}, \texttt{cornersVisited})\), care reprezină dacă colțurile au fost vizitate.
+	\item \texttt{isGoalState}: Această metodă determină dacă starea curentă este de tip scop, adică toate cele patru colțuri au fost vizitate:
+	\par Dacă toate valorile din \texttt{state[1]} sunt \texttt{True}, înseamnă că Pacman a vizitat toate colțurile, iar problema este rezolvată.
+	\item \texttt{getSuccessors}: Această metodă verifică fiecare direcție posibilă (nord, sud, est, vest) și calculează poziția următoare, evitând pereții. Dacă poziția următoare este un colț, flag-ul pentru acel colț este setat la \texttt{True}.
+\end{itemize}
+
+\par Implementarea metodelor este prezentată mai jos:
+\inputminted[linenos]{python}{code/finding_all_corners.py}
+
+\subsection{Question 6 - Corners Problem: Heuristic}
+\par Euristica dezvoltată pentru problema colțurilor calculează o estimare a costului minim necesar pentru a vizita toate colțurile rămase. Aceasta se bazează pe distanța Manhattan și adaugă distanțele minime necesare pentru a vizita colțurile neexplorate.
+
+\par Implementarea metodei este următoarea:
+\inputminted[linenos]{python}{code/corners_heuristic.py}
+
+\par Această metodă funcționează astfel:
+\begin{itemize}
+	\item Se identifică toate colțurile care nu au fost vizitate (\texttt{unvisitedCorners}).
+	\item Începând de la poziția curentă (\texttt{current}), se calculează distanța Manhattan de la nodul curent la fiecare colț neexplorat.
+	\item Se selectează colțul cel mai apropiat, se adaugă distanța către acesta la euristică și se actualizează poziția curentă.
+	\item Procesul continuă până când toate colțurile au fost vizitate.
+\end{itemize}
+
+\par Euristica returnează suma distanțelor minime necesare pentru a vizita toate colțurile rămase. Este:
+\begin{itemize}
+	\item \textbf{Admisibilă}: Nu supraestimează costul real, deoarece se folosește distanța Manhattan.
+	\item \textbf{Consistentă}: Respectă inegalitatea triunghiului. Pentru orice două stări consecutive \( n \) și \( n' \), diferența dintre euristicile acestora nu depășește costul deplasării directe între ele.
+\end{itemize}
+
+\subsection{Question 7 - Eating All the Dots}
+\par Scopul acestei probleme este găsirea unei soluții eficiente pentru ca Pacman să consume toate punctele de mâncare de pe hartă. Problema este definită prin clasa \texttt{FoodSearchProblem}, iar euristica utilizată este implementată în metoda \texttt{foodHeuristic}.
+
+\par Implementarea metodei este următoarea:
+\inputminted[linenos]{python}{code/eating_all_the_dots.py}
+
+\par Această metodă funcționează astfel:
+\begin{itemize}
+	\item Dacă nu există puncte de mâncare (\texttt{foodList} este golă), euristica returnează 0.
+	\item Se calculează următoarele valori:
+	\begin{itemize}
+		\item \texttt{minDistance}: Distanța Manhattan de la poziția curentă la cel mai apropiat punct de hrană.
+		\item \texttt{maxDistance}: Suma diferențelor maxime între coordonatele extreme (stânga-dreapta, sus-jos) ale punctelor de mâncare.
+	\end{itemize}
+	\item Euristica este suma celor două valori:
+	\[
+	heuristic = \texttt{minDistance} + \texttt{maxDistance}
+	\]
+\end{itemize}
+
+\par Această euristică are următoarele proprietăți:
+\begin{itemize}
+	\item Este \textbf{admisibilă}, deoarece nu supraestimează costul real. Suma distanțelor este întotdeauna mai mică sau egală cu costul minim necesar pentru a consuma toate punctele de mâncare.
+	\item Este \textbf{consistentă}, deoarece respectă inegalitatea triunghiului. Pentru orice două stări consecutive \( n \) și \( n' \), diferența dintre euristicile acestora nu depășește costul deplasării directe între ele.
+\end{itemize}
+
+\subsection{Question 8 - Suboptimal Search}
+\par În această problemă, se implementează o abordare suboptimă pentru consumarea tuturor punctelor de hrană. Metoda utilizată presupune identificarea celui mai apropiat punct de mâncare și navigarea către aceasta.
+
+\par Metoda principală, \texttt{findPathToClosestDot}, este implementată astfel:
+\inputminted[linenos]{python}{code/suboptimal_search.py}
+
+\par Descrierea metodei:
+\begin{itemize}
+	\item Se obține poziția inițială a lui Pacman folosind \texttt{gameState.getPacmanPosition()}.
+	\item Se obține grila punctelor de mâncare și grila pereților.
+	\item Se creează o instanță a clasei \texttt{AnyFoodSearchProblem}, care definește problema căutării unui punct de mâncare.
+	\item Se utilizează algoritmul \textbf{Breadth First Search (BFS)} pentru a găsi calea către cel mai apropiat punct de mâncare.
+\end{itemize}
+
+\section{Adversarial search}
+% q1-q3 din project2
+\subsection{Question 1 - Reflex Agent}
+\par Metoda \texttt{evaluationFunction} calculează un scor pentru fiecare acțiune posibilă, luând în considerare mai mulți factori ai stării jocului. Implementarea este prezentată mai jos:
+\inputminted[linenos]{python}{code/reflex_agent.py}
+
+\par Algoritmul calculează următoarele valori:
+\begin{itemize}
+	\item \textbf{Distanța până la cea mai apropiată mâncare} (\texttt{closestFoodDistance}): Cu cât Pacman este mai aproape de mâncare, cu atât scorul va crește.
+	\item \textbf{Distanța până la capsule} (\texttt{closestCapsuleDistance}): Capsulelele oferă un scor suplimentar, încurajându-l pe Pacman să le consume.
+	\item \textbf{Distanța până la fantome}: 
+	\begin{itemize}
+		\item Dacă o fantomă este „scared” (timp rămas pozitiv în \texttt{newScaredTimes}), apropierea de ea crește scorul.
+		\item Dacă fantoma nu este „scared”, apropierea excesivă reduce scorul.
+	\end{itemize}
+	\item \textbf{Scorul stării succesive} (\texttt{successorGameState.getScore()}): Scorul general al stării este folosit ca bază pentru calcul.
+\end{itemize}
+
+\subsection{Question 2 - Minimax}
+\par Algoritmul \textbf{Minimax} este utilizat pentru a determina cea mai bună strategie pentru Pacman într-un mediu adversarial. Pacman acționează ca \textbf{agentul max}, încercând să maximizeze scorul obținut, în timp ce fantomele, \textbf{agenții min} încearcă să reducă scorul prin minimizarea acestuia.
+
+\par Implementarea metodei \texttt{getAction} este următoarea:
+\inputminted[linenos]{python}{code/minimax.py}
+
+\par Descrierea algoritmului:
+\begin{itemize}
+	\item \textbf{Punct de oprire}: Dacă starea este terminală (\texttt{win} sau \texttt{lose}) sau dacă adâncimea maximă a fost atinsă, se returnează valoarea dată de \texttt{evaluationFunction}.
+	\item \textbf{Pacman (Agentul Max)}:
+	\begin{itemize}
+		\item Pacman caută să maximizeze scorul alegând succesorul cu cel mai mare scor minim returnat de fantome.
+	\end{itemize}
+	\item \textbf{Fantomele (Agenții Min)}:
+	\begin{itemize}
+		\item Fantomele încearcă să minimizeze scorul alegând succesorul cu cel mai mic scor returnat de Pacman.
+	\end{itemize}
+	\item \textbf{Trecerea între agenți}: 
+	\begin{itemize}
+		\item Algoritmul iterează între agenți, avansând în adâncime la fiecare tur complet.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Question 3 - Alpha-Beta Pruning}
+\par Algoritmul \textbf{Alpha-Beta Pruning} optimizează procesul de căutare Minimax prin reducerea numărului de stări evaluate. Acesta utilizează două valori, \texttt{alpha} și \texttt{beta}, pentru a menține limitele scorurilor maxime și minime posibile în arborele de joc.
+
+\par Implementarea metodei \texttt{getAction} este următoarea:
+\inputminted[linenos]{python}{code/alpha_beta_pruning.py}
+
+\par Descrierea algoritmului:
+\begin{itemize}
+	\item \textbf{Punct de oprire}: Algoritmul se oprește când jocul este câștigat, pierdut sau adâncimea maximă este atinsă, utilizând \texttt{evaluationFunction} pentru evaluare.
+	\item \textbf{Alpha (\( \alpha \))}: Păstrează cel mai bun scor găsit de agentul Max (Pacman).
+	\item \textbf{Beta (\( \beta \))}: Păstrează cel mai bun scor găsit de agenții Min (fantomele).
+	\item \textbf{Tăierea (pruning)}: Dacă un nod are un scor mai bun pentru adversar decât limita \( \alpha \) sau \( \beta \), atunci sub-arborele acestuia este eliminat din căutare.
+\end{itemize}
