@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.11.27)  27 NOV 2024 18:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.11.27)  30 NOV 2024 18:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -823,7 +823,7 @@ l.53 \include{text/documentatie.tex}
 \pydata@fh@_FAD58DE7366495DB4650CFEFAC2FCD61.data.minted=\write7
 \openout7 = `_FAD58DE7366495DB4650CFEFAC2FCD61.data.minted'.
 
-runsystem(latexminted config  --timestamp 20241127182625 FAD58DE7366495DB4650CF
+runsystem(latexminted config  --timestamp 20241130180841 FAD58DE7366495DB4650CF
 EFAC2FCD61)...disabled (restricted).
 
 
@@ -1010,7 +1010,7 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.133 ...ed[linenos]{python}{code/reflex_agent.py}
+l.134 ...ed[linenos]{python}{code/reflex_agent.py}
                                                   
 (That was another \errmessage.)
 
@@ -1023,7 +1023,7 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.151 ...tminted[linenos]{python}{code/minimax.py}
+l.152 ...tminted[linenos]{python}{code/minimax.py}
                                                   
 (That was another \errmessage.)
 
@@ -1036,7 +1036,7 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.174 ...enos]{python}{code/alpha_beta_pruning.py}
+l.175 ...enos]{python}{code/alpha_beta_pruning.py}
                                                   
 (That was another \errmessage.)
 
@@ -1070,7 +1070,7 @@ pfb><D:/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><D:/MiKTeX/fonts/type1
 /public/amsfonts/cm/cmsy8.pfb><D:/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.
 pfb><D:/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><D:/MiKTeX/fonts/type1
 /public/amsfonts/cm/cmtt10.pfb>
-Output written on main.pdf (11 pages, 308038 bytes).
+Output written on main.pdf (11 pages, 308721 bytes).
 PDF statistics:
  204 PDF objects out of 1000 (max. 8388607)
  25 named destinations out of 1000 (max. 500000)
