@@ -181,3 +181,50 @@ unde \((x_1, y_1)\) și \((x_2, y_2)\) sunt coordonatele nodului curent, respect
 	\item \textbf{Beta (\( \beta \))}: Păstrează cel mai bun scor găsit de agenții Min (fantomele).
 	\item \textbf{Tăierea (pruning)}: Dacă un nod are un scor mai bun pentru adversar decât limita \( \alpha \) sau \( \beta \), atunci sub-arborele acestuia este eliminat din căutare.
 \end{itemize}
+
+\subsection{Question 4 - Expectimax (BONUS)}
+\par Algoritmul \textbf{Expectimax} este utilizat pentru a modela comportamentul adversarilor care acționează aleatoriu. Spre deosebire de Minimax, unde adversarii sunt asumați a fi perfect raționali, Expectimax tratează deciziile adversarilor ca alegeri probabilistice.
+
+\par Implementarea metodei \texttt{getAction} este următoarea:
+\inputminted[linenos]{python}{code/expectimax.py}
+
+\par Descrierea algoritmului:
+\begin{itemize}
+    \item \textbf{Punct de oprire}: Dacă starea este terminală (\texttt{win} sau \texttt{lose}) sau dacă adâncimea maximă a fost atinsă, se returnează valoarea dată de \texttt{evaluationFunction}.
+    \item \textbf{Pacman (Agentul Max)}:
+    \begin{itemize}
+        \item Pacman caută să maximizeze scorul pe baza succesorilor disponibili.
+    \end{itemize}
+    \item \textbf{Fantomele (Agenții aleatorii)}:
+    \begin{itemize}
+        \item Fantomele sunt modelate ca acționând uniform aleatoriu asupra acțiunilor disponibile.
+        \item Scorul unui nod este calculat ca o medie ponderată a succesorilor săi.
+    \end{itemize}
+\end{itemize}
+
+\par Expectimax este util pentru modelarea scenariilor unde adversarii au un comportament mai puțin predictibil, dar poate necesita resurse computaționale mai mari comparativ cu Minimax.
+
+\subsection{Question 5 - Better Evaluation Function (BONUS)}
+\par Funcția de evaluare avansată contribuie la selectarea celor mai bune acțiuni pentru Pacman pe baza unei analize a:
+\begin{itemize}
+    \item Distanței față de fantome (evitare sau urmărire dacă sunt „scared”).
+    \item Distanței până la punctele de mâncare.
+    \item Disponibilității capsulelor.
+    \item Explorării zonelor nevizitate.
+    \item Penalizării acțiunii \texttt{STOP}.
+\end{itemize}
+
+\par Implementarea funcției de evaluare este prezentată mai jos:
+\inputminted[linenos]{python}{code/better_evaluation_function.py}
+
+\par Descriere:
+\begin{itemize}
+    \item \textbf{Fantome active}: Distanța Manhattan până la fantomele apropiate este calculată, iar stările unde Pacman se află prea aproape de o fantomă activă sunt penalizate sever.
+    \item \textbf{Puncte de mâncare}: Stările unde Pacman este aproape de un punct de mâncare sunt recompensate pentru a încuraja colectarea acestora.
+    \item \textbf{Capsule}: Se oferă o prioritate ridicată pentru colectarea capsulelor, în special când există fantome apropiate.
+    \item \textbf{Explorare}: Dacă nu există puncte de mâncare în imediata apropiere, Pacman este încurajat să exploreze zonele nevizitate.
+    \item \textbf{Penalizare pentru \texttt{STOP}}: Acțiunea \texttt{STOP} este penalizată pentru a preveni inactivitatea.
+\end{itemize}
+
+\par Funcția de evaluare este esențială pentru îmbunătățirea performanței agentului, mai ales în probleme complexe cu multiple constrângeri.
+
