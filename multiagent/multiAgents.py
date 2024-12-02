@@ -229,29 +229,103 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
-    """
-      Your expectimax agent (question 4)
-    """
+    def getAction(self, gameState):
+        def expectimax(agentIndex, depth, state):
+            if state.isWin() or state.isLose() or depth == self.depth:
+                return self.evaluationFunction(state)
 
-    def getAction(self, gameState: GameState):
-        """
-        Returns the expectimax action using self.depth and self.evaluationFunction
+            numAgents = state.getNumAgents()
+            nextAgent = (agentIndex + 1) % numAgents
+            nextDepth = depth + 1 if nextAgent == 0 else depth
 
-        All ghosts should be modeled as choosing uniformly at random from their
-        legal moves.
-        """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+            if agentIndex == 0:  # Pacman (maximize score)
+                actions = state.getLegalActions(agentIndex)
+                actions = [action for action in actions if action != Directions.STOP]
+                return max(
+                    expectimax(nextAgent, nextDepth, state.generateSuccessor(agentIndex, action))
+                    for action in actions
+                )
+            else:  # Ghosts (choose action probabilistically)
+                actions = state.getLegalActions(agentIndex)
+                probabilities = [1 / len(actions)] * len(actions) if actions else []
+                return sum(
+                    prob * expectimax(nextAgent, nextDepth, state.generateSuccessor(agentIndex, action))
+                    for action, prob in zip(actions, probabilities)
+                )
+
+        legalMoves = gameState.getLegalActions(0)
+        bestScore = float('-inf')
+        bestAction = None
+
+        for action in legalMoves:
+            score = expectimax(1, 0, gameState.generateSuccessor(0, action))
+            if score > bestScore:
+                bestScore = score
+                bestAction = action
+
+        if bestAction is None:
+            bestAction = Directions.STOP
+
+        foodList = gameState.getFood().asList()
+        bestAction = min(legalMoves, key=lambda action: min(
+            manhattanDistance(gameState.generateSuccessor(0, action).getPacmanPosition(), food) for food in foodList
+        ))
+
+        return bestAction
+
 
 def betterEvaluationFunction(currentGameState: GameState):
-    """
-    Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
-    evaluation function (question 5).
+    pacmanPos = currentGameState.getPacmanPosition()
+    foodGrid = currentGameState.getFood()
+    ghostStates = currentGameState.getGhostStates()
+    capsules = currentGameState.getCapsules()
 
-    DESCRIPTION: <write something here so we know what you did>
-    """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Ghost avoidance
+    ghostDistances = [
+        manhattanDistance(pacmanPos, ghost.getPosition())
+        for ghost in ghostStates if ghost.scaredTimer == 0
+    ]
+    ghostPenalty = min(ghostDistances) if ghostDistances else float('inf')
+    ghostPenalty = -500 if ghostPenalty < 2 else 0
+
+    # Food prioritization
+    foodList = foodGrid.asList()
+    if foodList:
+        closestFoodDistance = min(manhattanDistance(pacmanPos, food) for food in foodList)
+        foodReward = 10.0 / closestFoodDistance
+    else:
+        foodReward = 0
+
+    # Capsule prioritization
+    capsuleReward = 0
+    if capsules:
+        closestCapsuleDistance = min(manhattanDistance(pacmanPos, capsule) for capsule in capsules)
+        capsuleReward = 15.0 / (closestCapsuleDistance + 1)
+
+    # Exploration incentive
+    unvisitedPositions = [
+        (x, y) for x in range(foodGrid.width) for y in range(foodGrid.height)
+        if not foodGrid[x][y] and not currentGameState.hasWall(x, y)
+    ]
+    explorationReward = 0
+    if unvisitedPositions:
+        closestUnvisited = min(manhattanDistance(pacmanPos, pos) for pos in unvisitedPositions)
+        explorationReward = 5.0 / (closestUnvisited + 1)
+
+    # Penalize STOP
+    stopPenalty = -100 if Directions.STOP in currentGameState.getLegalPacmanActions() else 0
+
+    return (
+        currentGameState.getScore()
+        + foodReward
+        + capsuleReward
+        + ghostPenalty
+        + explorationReward
+        + stopPenalty
+    )
+
+
+
 
 # Abbreviation
 better = betterEvaluationFunction
